@@ -1,4 +1,4 @@
-name: Flutter Build and Test
+name: Flutter CI
 
 on:
   push:
@@ -9,33 +9,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.13.0'
-        
+
+    - name: Show Flutter info
+      run: |
+        flutter --version
+        flutter doctor
+
     - name: Install dependencies
       run: |
         cd fitquest
         flutter pub get
-      
+
     - name: Run tests
       run: |
         cd fitquest
         flutter test
-      
+
     - name: Build APK
       run: |
         cd fitquest
         flutter build apk --release
-      
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: fitquest-apk
-        path: fitquest/build/app/outputs/flutter-apk/app-release.apk
