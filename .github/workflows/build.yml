@@ -37,4 +37,4 @@ jobs:
     - name: Build APK
       run: |
         cd fitquest
-        flutter build apk --release
+        flutter run -d windows
