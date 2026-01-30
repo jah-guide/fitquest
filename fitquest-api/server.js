@@ -8,6 +8,8 @@ const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const workoutsRoutes = require('./routes/workouts');
+const routinesRoutes = require('./routes/routines');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +24,8 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/auth', authRoutes);   // /api/auth/register, /api/auth/login
 app.use('/api/user', userRoutes);   // protected user endpoints
+app.use('/api/workouts', workoutsRoutes); // public workouts
+app.use('/api/routines', routinesRoutes); // user routines (protected)
 
 // Health check
 app.get('/', (req, res) => res.send({ status: 'ok', msg: 'FitQuest API running' }));
