@@ -9,11 +9,21 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
     trim: true
   },
+  // passwordHash is optional to allow SSO-only accounts
   passwordHash: {
     type: String,
-    required: true
   },
   displayName: {
+    type: String,
+    default: ''
+  },
+  // Social provider fields: 'local' (email/password), 'google', 'apple', etc.
+  provider: {
+    type: String,
+    enum: ['local', 'google', 'apple'],
+    default: 'local'
+  },
+  providerId: {
     type: String,
     default: ''
   },
