@@ -34,7 +34,7 @@ jobs:
         cd fitquest
         flutter test
 
-    - name: Build APK
+    - name: Build chrome app
       run: |
         cd fitquest
-        flutter run -d windows
+        flutter run -d chrome
