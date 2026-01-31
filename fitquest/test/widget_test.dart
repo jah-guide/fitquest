@@ -7,24 +7,39 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 import 'package:fitquest/main.dart';
+import 'package:fitquest/providers/auth_provider.dart';
+import 'package:fitquest/providers/language_provider.dart';
+import 'package:fitquest/providers/theme_provider.dart';
+import 'package:fitquest/providers/exercise_provider.dart';
+
+class TestAuthProvider extends AuthProvider {
+  @override
+  Map<String, dynamic>? get currentUser => {
+    'id': 'test',
+    'email': 'test@example.com',
+  };
+}
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AuthProvider>(
+            create: (_) => TestAuthProvider(),
+          ),
+          ChangeNotifierProvider(create: (_) => LanguageProvider()),
+          ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ChangeNotifierProvider(create: (_) => ExerciseProvider()),
+        ],
+        child: const App(),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the home stats show two zero values (workouts/minutes).
+    expect(find.text('0'), findsNWidgets(2));
   });
 }
