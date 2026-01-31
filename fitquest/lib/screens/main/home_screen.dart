@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fitquest/locale/app_localizations.dart';
 import '../../providers/auth_provider.dart';
+import 'exercises_screen.dart';
+import 'profile_screen.dart';
+import 'progress_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,16 +26,16 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Welcome, ${user?['displayName'] ?? 'Fitness Enthusiast'}!',
+                    '${AppLocalizations.of(context)!.welcome}, ${user?['displayName'] ?? AppLocalizations.of(context)!.fitnessEnthusiast}!',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Ready for your next workout?',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  Text(
+                    AppLocalizations.of(context)!.readyWorkout,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 ],
               ),
@@ -41,23 +45,28 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 30),
 
           // Quick Stats
-          const Text(
-            'Today\'s Summary',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+          Text(
+            AppLocalizations.of(context)!.todaySummary,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 15),
 
           Row(
             children: [
               Expanded(
-                child: _buildStatCard('Workouts', '0', Icons.fitness_center),
+                child: _buildStatCard(
+                  AppLocalizations.of(context)!.workouts,
+                  '0',
+                  Icons.fitness_center,
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _buildStatCard('Minutes', '0', Icons.timer),
+                child: _buildStatCard(
+                  AppLocalizations.of(context)!.minutes,
+                  '0',
+                  Icons.timer,
+                ),
               ),
             ],
           ),
@@ -65,12 +74,9 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 30),
 
           // Quick Actions
-          const Text(
-            'Quick Actions',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+          Text(
+            AppLocalizations.of(context)!.quickActions,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 15),
 
@@ -80,10 +86,59 @@ class HomeScreen extends StatelessWidget {
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
             children: [
-              _buildActionCard('Start Workout', Icons.play_arrow, Colors.blue),
-              _buildActionCard('Exercises', Icons.fitness_center, Colors.green),
-              _buildActionCard('Progress', Icons.trending_up, Colors.orange),
-              _buildActionCard('Settings', Icons.settings, Colors.purple),
+              _buildActionCard(
+                AppLocalizations.of(context)!.startWorkout,
+                Icons.play_arrow,
+                Colors.blue,
+                onTap: () {
+                  // For now, open Exercises as entrypoint to start a workout
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ExercisesScreen()),
+                  );
+                },
+              ),
+              _buildActionCard(
+                AppLocalizations.of(context)!.exercises,
+                Icons.fitness_center,
+                Colors.green,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ExercisesScreen()),
+                  );
+                },
+              ),
+              _buildActionCard(
+                'Routines',
+                Icons.repeat,
+                Colors.teal,
+                onTap: () {
+                  Navigator.pushNamed(context, '/routines');
+                },
+              ),
+              _buildActionCard(
+                AppLocalizations.of(context)!.progress,
+                Icons.trending_up,
+                Colors.orange,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProgressScreen()),
+                  );
+                },
+              ),
+              _buildActionCard(
+                AppLocalizations.of(context)!.settings,
+                Icons.settings,
+                Colors.purple,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  );
+                },
+              ),
             ],
           ),
         ],
@@ -101,28 +156,25 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Text(
-              title,
-              style: const TextStyle(color: Colors.grey),
-            ),
+            Text(title, style: const TextStyle(color: Colors.grey)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActionCard(String title, IconData icon, Color color) {
+  Widget _buildActionCard(
+    String title,
+    IconData icon,
+    Color color, {
+    VoidCallback? onTap,
+  }) {
     return Card(
       elevation: 2,
       child: InkWell(
-        onTap: () {
-          // TODO: Implement action
-        },
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
@@ -133,9 +185,7 @@ class HomeScreen extends StatelessWidget {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
