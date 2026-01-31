@@ -9,7 +9,7 @@ This repository contains the **complete Flutter source code** for the FitQuest a
 ## 📽️ Video Demonstration
 
 🎥 **Feature Demonstration Video (Unlisted YouTube Link)**  
-👉 **[INSERT YOUTUBE LINK HERE]**
+👉 https://www.youtube.com/watch?v=R9quQulg0o
 
 The demonstration video includes:
 - A full walkthrough of the application features
