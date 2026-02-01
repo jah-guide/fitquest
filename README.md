@@ -14,6 +14,7 @@ This repository contains the **complete Flutter source code** for the FitQuest a
 The demonstration video includes:
 - A full walkthrough of the application features
 - User registration and login flow
+- User registration, **Single Sign-On (SSO)**, and traditional login flow
 - Workout and routine creation
 - Data stored in MongoDB via the REST API
 - Offline mode using SQLite and data synchronization
@@ -78,6 +79,7 @@ fitquest/
 ## 🔐 Authentication & Security
 
 - Users can **register and log in**
+- **Single Sign-On (SSO)** allows authentication through a trusted third-party provider
 - Passwords are **securely hashed using bcrypt**
 - Authentication data is stored securely in the backend database
 - Input validation prevents invalid or malformed data from crashing the app
@@ -133,6 +135,19 @@ Push notifications were explored during development.
 While the **full notification system is not yet complete**, foundational work was done toward supporting real-time user alerts.
 
 This feature is planned for future expansion.
+
+---
+
+## 🔑 Single Sign-On (SSO) Integration
+
+The application includes **Single Sign-On (SSO)** functionality to streamline user authentication:
+- Users can authenticate using an external identity provider
+- Eliminates the need to manually create and remember credentials
+- On first SSO login, a user profile is automatically created in the backend
+- Returning users are authenticated seamlessly
+- SSO accounts are linked to workouts and routines stored in MongoDB
+
+This feature improves usability, accessibility, and user retention.
 
 ---
 
