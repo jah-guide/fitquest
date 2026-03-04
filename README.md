@@ -55,7 +55,7 @@ FitQuest is designed to make fitness **engaging, accessible, and sustainable** b
 ---
 
 ## 📂 Project Structure
-
+```
 fitquest/
 │
 ├── lib/
@@ -72,7 +72,7 @@ fitquest/
 ├── ios/
 ├── pubspec.yaml
 └── README.md
-
+```
 
 ---
 
