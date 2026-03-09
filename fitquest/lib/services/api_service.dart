@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
@@ -5,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
+  static const Duration _requestTimeout = Duration(seconds: 15);
+
   static const String _configuredBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: '',
@@ -259,7 +262,9 @@ class ApiService {
   // GET system/preloaded workouts
   Future<Map<String, dynamic>> getWorkouts() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/workouts'));
+      final response = await http
+          .get(Uri.parse('$baseUrl/workouts'))
+          .timeout(_requestTimeout);
       try {
         final data = json.decode(response.body);
         if (response.statusCode == 200) {
@@ -279,6 +284,11 @@ class ApiService {
           'status': response.statusCode,
         };
       }
+    } on TimeoutException {
+      return {
+        'success': false,
+        'error': 'Request timed out. Please check your connection.',
+      };
     } catch (e) {
       return {'success': false, 'error': 'Network error: $e'};
     }
@@ -287,10 +297,9 @@ class ApiService {
   // Routines endpoints (protected)
   Future<Map<String, dynamic>> getRoutines() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/routines'),
-        headers: await _getHeaders(),
-      );
+      final response = await http
+          .get(Uri.parse('$baseUrl/routines'), headers: await _getHeaders())
+          .timeout(_requestTimeout);
       developer.log(
         'getRoutines: status=${response.statusCode}, body=${response.body}',
         name: 'ApiService',
@@ -318,6 +327,11 @@ class ApiService {
           'status': response.statusCode,
         };
       }
+    } on TimeoutException {
+      return {
+        'success': false,
+        'error': 'Request timed out. Please check your connection.',
+      };
     } catch (e) {
       return {'success': false, 'error': 'Network error: $e'};
     }

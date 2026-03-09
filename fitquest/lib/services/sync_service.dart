@@ -1,5 +1,6 @@
 // fitquest/lib/services/sync_service.dart
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import './database_helper.dart';
 import '../models/exercise.dart';
 import 'exercise_api_service.dart';
@@ -33,7 +34,7 @@ class SyncService {
         // Mark as synced in local DB
         await _dbHelper.updateExercise(exercise.copyWith(isSynced: true));
       } catch (e) {
-        print('Failed to sync exercise ${exercise.name}: $e');
+        debugPrint('Failed to sync exercise ${exercise.name}: $e');
       }
     }
 
@@ -44,7 +45,7 @@ class SyncService {
   Future<void> _syncExerciseToServer(Exercise exercise) async {
     // Simulate API call
     await Future.delayed(const Duration(milliseconds: 500));
-    print('Synced exercise to server: ${exercise.name}');
+    debugPrint('Synced exercise to server: ${exercise.name}');
   }
 
   Future<void> _fetchLatestExercises() async {
@@ -60,7 +61,7 @@ class SyncService {
         }
       }
     } catch (e) {
-      print('Failed to fetch exercises: $e');
+      debugPrint('Failed to fetch exercises: $e');
     }
   }
 

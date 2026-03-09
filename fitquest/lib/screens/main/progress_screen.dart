@@ -136,11 +136,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final sessions = _filteredSessions();
     if (sessions.isEmpty) return 0;
 
-    final uniqueDays = sessions
-        .map((e) => DateTime(e.endedAt.year, e.endedAt.month, e.endedAt.day))
-        .toSet()
-        .toList()
-      ..sort((a, b) => b.compareTo(a));
+    final uniqueDays =
+        sessions
+            .map(
+              (e) => DateTime(e.endedAt.year, e.endedAt.month, e.endedAt.day),
+            )
+            .toSet()
+            .toList()
+          ..sort((a, b) => b.compareTo(a));
 
     final today = DateTime.now();
     var cursor = DateTime(today.year, today.month, today.day);
@@ -159,6 +162,33 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return streak;
   }
 
+  int _totalSets(WorkoutSession session) {
+    return session.exerciseLogs.fold<int>(
+      0,
+      (sum, exercise) => sum + exercise.sets.length,
+    );
+  }
+
+  int _totalReps(WorkoutSession session) {
+    return session.exerciseLogs.fold<int>(
+      0,
+      (sum, exercise) =>
+          sum + exercise.sets.fold<int>(0, (setSum, set) => setSum + set.reps),
+    );
+  }
+
+  double? _averageRpe(WorkoutSession session) {
+    final values = session.exerciseLogs
+        .expand((exercise) => exercise.sets)
+        .map((set) => set.rpe)
+        .whereType<double>()
+        .toList();
+
+    if (values.isEmpty) return null;
+    final total = values.reduce((a, b) => a + b);
+    return total / values.length;
+  }
+
   void _showExportSummary() {
     final sessions = _filteredSessions();
     final totalSeconds = sessions.fold<int>(
@@ -174,7 +204,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
       ..writeln('Total Minutes: ${totalSeconds ~/ 60}')
       ..writeln('Average Session: ${_formatDuration(avgSeconds)}')
       ..writeln('Current Streak: ${_currentStreakDays()} days')
-      ..writeln('Longest Session: ${_formatDuration(_longestSessionSeconds())}');
+      ..writeln(
+        'Longest Session: ${_formatDuration(_longestSessionSeconds())}',
+      );
 
     showModalBottomSheet(
       context: context,
@@ -196,7 +228,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: SelectableText(summary.toString()),
@@ -210,7 +244,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     if (!context.mounted) return;
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Summary copied to clipboard.')),
+                      const SnackBar(
+                        content: Text('Summary copied to clipboard.'),
+                      ),
                     );
                   },
                   icon: const Icon(Icons.copy_rounded),
@@ -421,9 +457,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             height: 220,
                             child: Builder(
                               builder: (context) {
-                                final data = _minutesByDayForRange(sessions)
-                                    .entries
-                                    .toList();
+                                final data = _minutesByDayForRange(
+                                  sessions,
+                                ).entries.toList();
                                 final maxY = data
                                     .map((e) => e.value.toDouble())
                                     .reduce((a, b) => a > b ? a : b);
@@ -438,10 +474,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                     borderData: FlBorderData(show: false),
                                     titlesData: FlTitlesData(
                                       rightTitles: const AxisTitles(
-                                        sideTitles: SideTitles(showTitles: false),
+                                        sideTitles: SideTitles(
+                                          showTitles: false,
+                                        ),
                                       ),
                                       topTitles: const AxisTitles(
-                                        sideTitles: SideTitles(showTitles: false),
+                                        sideTitles: SideTitles(
+                                          showTitles: false,
+                                        ),
                                       ),
                                       leftTitles: const AxisTitles(
                                         sideTitles: SideTitles(
@@ -454,20 +494,23 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                           showTitles: true,
                                           getTitlesWidget: (value, meta) {
                                             final index = value.toInt();
-                                            if (index < 0 || index >= data.length) {
+                                            if (index < 0 ||
+                                                index >= data.length) {
                                               return const SizedBox.shrink();
                                             }
                                             return Padding(
-                                              padding: const EdgeInsets.only(top: 6),
+                                              padding: const EdgeInsets.only(
+                                                top: 6,
+                                              ),
                                               child: Text(
                                                 _selectedRange ==
                                                         _ProgressRange.last7Days
-                                                    ? DateFormat('E').format(
-                                                        data[index].key,
-                                                      )
-                                                    : DateFormat('d MMM').format(
-                                                        data[index].key,
-                                                      ),
+                                                    ? DateFormat(
+                                                        'E',
+                                                      ).format(data[index].key)
+                                                    : DateFormat(
+                                                        'd MMM',
+                                                      ).format(data[index].key),
                                                 style: TextStyle(
                                                   fontSize: 11,
                                                   color: Theme.of(context)
@@ -480,15 +523,21 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                         ),
                                       ),
                                     ),
-                                    barGroups: List.generate(data.length, (index) {
+                                    barGroups: List.generate(data.length, (
+                                      index,
+                                    ) {
                                       return BarChartGroupData(
                                         x: index,
                                         barRods: [
                                           BarChartRodData(
                                             toY: data[index].value.toDouble(),
                                             width: 18,
-                                            borderRadius: BorderRadius.circular(5),
-                                            color: Theme.of(context).colorScheme.primary,
+                                            borderRadius: BorderRadius.circular(
+                                              5,
+                                            ),
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
                                           ),
                                         ],
                                       );
@@ -551,10 +600,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                     borderData: FlBorderData(show: false),
                                     titlesData: const FlTitlesData(
                                       topTitles: AxisTitles(
-                                        sideTitles: SideTitles(showTitles: false),
+                                        sideTitles: SideTitles(
+                                          showTitles: false,
+                                        ),
                                       ),
                                       rightTitles: AxisTitles(
-                                        sideTitles: SideTitles(showTitles: false),
+                                        sideTitles: SideTitles(
+                                          showTitles: false,
+                                        ),
                                       ),
                                     ),
                                     lineBarsData: [
@@ -563,7 +616,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                         isCurved: true,
                                         barWidth: 3,
                                         dotData: const FlDotData(show: true),
-                                        color: Theme.of(context).colorScheme.secondary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.secondary,
                                         belowBarData: BarAreaData(
                                           show: true,
                                           color: Theme.of(
@@ -582,28 +637,44 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  Text('Recent Sessions', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Recent Sessions',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
-                  ...sessions.take(10).map(
-                    (session) => Card(
-                      child: ListTile(
-                        leading: const Icon(Icons.timer_outlined),
-                        title: Text(_formatDuration(session.durationSeconds)),
-                        subtitle: Text(
-                          DateFormat('EEE, dd MMM yyyy • HH:mm').format(
-                            session.endedAt,
-                          ),
-                        ),
-                        trailing: Text(
-                          'Peak: ${_formatDuration(_longestSessionSeconds())}',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 12,
+                  ...sessions
+                      .take(10)
+                      .map(
+                        (session) => Card(
+                          child: ListTile(
+                            leading: const Icon(Icons.timer_outlined),
+                            title: Text(
+                              _formatDuration(session.durationSeconds),
+                            ),
+                            subtitle: Text(
+                              [
+                                DateFormat(
+                                  'EEE, dd MMM yyyy • HH:mm',
+                                ).format(session.endedAt),
+                                if ((session.routineName ?? '').isNotEmpty)
+                                  'Routine: ${session.routineName}',
+                                if (_totalSets(session) > 0)
+                                  'Sets: ${_totalSets(session)} • Reps: ${_totalReps(session)}${_averageRpe(session) != null ? ' • Avg RPE: ${_averageRpe(session)!.toStringAsFixed(1)}' : ''}',
+                              ].join('\n'),
+                            ),
+                            trailing: Text(
+                              'Peak: ${_formatDuration(_longestSessionSeconds())}',
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                                fontSize: 12,
+                              ),
+                            ),
+                            isThreeLine: true,
                           ),
                         ),
                       ),
-                    ),
-                  ),
                 ],
               ),
             ),

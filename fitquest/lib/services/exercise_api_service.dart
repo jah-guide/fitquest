@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../models/exercise.dart';
 
@@ -6,7 +7,7 @@ class ExerciseApiService {
   static const _base = 'https://wger.de/api/v2';
 
   /// Fetch exercises. If [pageUrl] is provided, it will be used (useful for pagination).
-  /// Returns a map with keys: 'results' -> List<Exercise>, 'next' -> String? (next page URL)
+  /// Returns a map with keys: 'results' -> exercise list, 'next' -> String? (next page URL)
   Future<Map<String, dynamic>> fetchExercises({
     int limit = 20,
     String? pageUrl,
@@ -123,7 +124,7 @@ class ExerciseApiService {
       final id = item['id']?.toString() ?? '';
       return id.isNotEmpty ? 'Exercise #$id' : 'Exercise';
     } catch (e) {
-      print('Failed to extract name for item: $e');
+      debugPrint('Failed to extract name for item: $e');
       return 'Exercise';
     }
   }

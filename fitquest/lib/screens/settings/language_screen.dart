@@ -43,25 +43,27 @@ class LanguageScreen extends StatelessWidget {
                 children: _languages.map((lang) {
                   final code = lang['code']!;
                   final name = lang['name']!;
+                  final isSelected = groupValue == code;
 
-                  return RadioListTile<String>(
-                    value: code,
-                    groupValue: groupValue,
+                  return ListTile(
+                    leading: const Icon(Icons.language),
                     title: Text(name),
-                    secondary: const Icon(Icons.language),
-                    activeColor: Theme.of(context).colorScheme.primary,
-                    onChanged: (val) {
-                      if (val != null) {
-                        languageProvider.changeLanguage(val);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${AppLocalizations.of(context)!.languageChangedTo} $name',
-                            ),
-                            duration: const Duration(seconds: 2),
+                    trailing: isSelected
+                        ? Icon(
+                            Icons.check,
+                            color: Theme.of(context).colorScheme.primary,
+                          )
+                        : null,
+                    onTap: () {
+                      languageProvider.changeLanguage(code);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${AppLocalizations.of(context)!.languageChangedTo} $name',
                           ),
-                        );
-                      }
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
                     },
                   );
                 }).toList(),

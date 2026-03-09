@@ -288,6 +288,7 @@ class _MainAppState extends State<MainApp> {
             onPressed: () async {
               Navigator.pop(context); // Close dialog first
               await Provider.of<AuthProvider>(context, listen: false).logout();
+              if (!context.mounted) return;
               // Navigate back to login screen
               Navigator.pushAndRemoveUntil(
                 context,

@@ -1,6 +1,6 @@
 // fitquest/lib/providers/exercise_provider.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/database_helper.dart';
 import '../services/sync_service.dart';
@@ -63,7 +63,7 @@ class ExerciseProvider with ChangeNotifier {
     } catch (e) {
       // Provide a lightweight in-memory fallback for platforms where
       // path_provider / sqflite are not available (e.g., web in this setup).
-      print('Error loading exercises: $e');
+      debugPrint('Error loading exercises: $e');
       if (kIsWeb || e.toString().contains('MissingPluginException')) {
         _isOffline = true;
         _exercises = [
@@ -142,7 +142,7 @@ class ExerciseProvider with ChangeNotifier {
       await loadExercises(); // Reload list
     } catch (e) {
       // Fallback for web / missing plugins: add locally
-      print('Error adding exercise: $e');
+      debugPrint('Error adding exercise: $e');
       _exercises.add(exercise);
       notifyListeners();
     }

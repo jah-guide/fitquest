@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fitquest/locale/app_localizations.dart';
 import '../../services/api_service.dart';
 
 class CreateRoutineScreen extends StatefulWidget {
@@ -51,6 +52,7 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
   }
 
   Future<void> _save() async {
+    final loc = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
     setState(() => _loading = true);
@@ -65,18 +67,19 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
     if (res['success'] == true) {
       Navigator.pop(context, true);
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(res['error'] ?? 'Failed to save')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(res['error'] ?? loc.failedToSaveRoutine)),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Routine')),
+      appBar: AppBar(title: Text(loc.createRoutineTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -96,7 +99,7 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Design your custom workout flow and save it as a routine.',
+                        loc.createRoutineHeroText,
                         style: TextStyle(
                           color: colorScheme.onSecondaryContainer,
                           fontWeight: FontWeight.w600,
@@ -110,19 +113,20 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
               TextFormField(
                 initialValue: _name,
                 decoration: InputDecoration(
-                  labelText: 'Name',
+                  labelText: loc.nameLabel,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                validator: (v) =>
+                    (v == null || v.isEmpty) ? loc.required : null,
                 onSaved: (v) => _name = v ?? '',
               ),
               const SizedBox(height: 12),
               TextFormField(
                 initialValue: _description,
                 decoration: InputDecoration(
-                  labelText: 'Description (optional)',
+                  labelText: loc.descriptionOptionalLabel,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -133,14 +137,14 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Exercises',
+                  Text(
+                    loc.exercises,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextButton.icon(
                     onPressed: _addExercise,
                     icon: const Icon(Icons.add),
-                    label: const Text('Add'),
+                    label: Text(loc.addLabel),
                   ),
                 ],
               ),
@@ -156,13 +160,13 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                         TextFormField(
                           initialValue: ex['name'],
                           decoration: InputDecoration(
-                            labelText: 'Exercise name',
+                            labelText: loc.exerciseNameLabel,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                           validator: (v) =>
-                              (v == null || v.isEmpty) ? 'Required' : null,
+                              (v == null || v.isEmpty) ? loc.required : null,
                           onChanged: (v) => ex['name'] = v,
                         ),
                         Row(
@@ -171,7 +175,7 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                               child: TextFormField(
                                 initialValue: ex['reps']?.toString(),
                                 decoration: InputDecoration(
-                                  labelText: 'Reps',
+                                  labelText: loc.repsLabel,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -186,7 +190,7 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                               child: TextFormField(
                                 initialValue: ex['sets']?.toString(),
                                 decoration: InputDecoration(
-                                  labelText: 'Sets',
+                                  labelText: loc.setsLabel,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -198,13 +202,14 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Expanded(
                               child: TextFormField(
                                 initialValue: ex['durationSeconds']?.toString(),
                                 decoration: InputDecoration(
-                                  labelText: 'Duration (sec)',
+                                  labelText: loc.durationSecLabel,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -219,7 +224,7 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                               child: TextFormField(
                                 initialValue: ex['restSeconds']?.toString(),
                                 decoration: InputDecoration(
-                                  labelText: 'Rest (sec)',
+                                  labelText: loc.restSecLabel,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -240,8 +245,8 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                               });
                             },
                             icon: const Icon(Icons.delete, color: Colors.red),
-                            label: const Text(
-                              'Remove',
+                            label: Text(
+                              loc.removeLabel,
                               style: TextStyle(color: Colors.red),
                             ),
                           ),
@@ -263,7 +268,7 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Save Routine'),
+                      : Text(loc.saveRoutineLabel),
                 ),
               ),
             ],

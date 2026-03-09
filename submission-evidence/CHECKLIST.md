@@ -13,3 +13,10 @@ Suggested structure:
 - `submission-evidence/screenshots/`
 - `submission-evidence/video/`
 - `submission-evidence/release/`
+
+Reference guides:
+
+- `submission-evidence/README.md`
+- `submission-evidence/screenshots/README.md`
+- `submission-evidence/video/README.md`
+- `submission-evidence/release/README.md`

@@ -288,6 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 onPressed: () async {
                   await auth.logout();
+                  if (!context.mounted) return;
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
               ),

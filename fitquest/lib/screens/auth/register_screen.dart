@@ -305,6 +305,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           context,
                           listen: false,
                         ).signInWithGoogle();
+                        if (!context.mounted) return;
                         setState(() {
                           _isLoading = false;
                         });
@@ -344,6 +345,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               context,
                               listen: false,
                             ).signInWithApple();
+                            if (!context.mounted) return;
                             setState(() {
                               _isLoading = false;
                             });

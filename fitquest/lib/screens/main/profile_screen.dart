@@ -82,6 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     try {
       final bytes = await file.readAsBytes();
+      if (!mounted) return;
       final encoded = base64Encode(bytes);
 
       final result = await Provider.of<AuthProvider>(
@@ -125,6 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ? _passwordController.text
                 : null,
           );
+      if (!context.mounted) return;
 
       if (result['success'] == true) {
         setState(() {
@@ -239,6 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () async {
               Navigator.pop(context); // Close dialog first
               await Provider.of<AuthProvider>(context, listen: false).logout();
+              if (!context.mounted) return;
               // Navigate back to login screen
               Navigator.pushAndRemoveUntil(
                 context,

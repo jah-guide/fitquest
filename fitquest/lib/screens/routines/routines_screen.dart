@@ -11,37 +11,68 @@ class RoutinesScreen extends StatefulWidget {
 
 class _RoutinesScreenState extends State<RoutinesScreen> {
   final ApiService _api = ApiService();
-  List<dynamic> _routines = [];
+  List<Map<String, dynamic>> _routines = [];
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadRoutines();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _loadRoutines();
+    });
   }
 
   Future<void> _loadRoutines() async {
+    final loc = AppLocalizations.of(context);
     setState(() => _loading = true);
-    final res = await _api.getRoutines();
-    if (!mounted) return;
-    if (res['success'] == true) {
-      setState(() {
-        _routines = res['routines'];
-      });
-    } else {
+    try {
+      final res = await _api.getRoutines();
+      if (!mounted) return;
+      if (res['success'] == true) {
+        setState(() {
+          _routines = _coerceListOfMaps(res['routines']);
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              res['error'] ??
+                  loc?.failedToLoadRoutines ??
+                  'Failed to load routines',
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(res['error'] ?? 'Failed to load routines')),
+        SnackBar(
+          content: Text(loc?.failedToLoadRoutines ?? 'Failed to load routines'),
+        ),
       );
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
-    setState(() => _loading = false);
+  }
+
+  List<Map<String, dynamic>> _coerceListOfMaps(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.workouts)),
+      appBar: AppBar(title: Text(loc.routinesTitle)),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
@@ -61,7 +92,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Build, save, and reuse routines like a pro coach.',
+                            loc.routinesHeroText,
                             style: TextStyle(
                               color: colorScheme.onPrimaryContainer,
                               fontWeight: FontWeight.w600,
@@ -76,7 +107,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'My Routines',
+                        loc.myRoutines,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       FilledButton.tonalIcon(
@@ -87,7 +118,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
                           ).then((_) => _loadRoutines());
                         },
                         icon: const Icon(Icons.add),
-                        label: const Text('New'),
+                        label: Text(loc.newLabel),
                       ),
                     ],
                   ),
@@ -96,17 +127,17 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
                     const SizedBox(height: 40),
                     Center(
                       child: Text(
-                        'No routines yet. Create one!',
+                        loc.noRoutinesYet,
                         style: TextStyle(color: colorScheme.onSurfaceVariant),
                       ),
                     ),
                   ] else
-                    ..._routines.map((r) => _buildRoutineCard(r)),
+                    ..._routines.map(_buildRoutineCard),
                   const SizedBox(height: 20),
                   const Divider(),
                   const SizedBox(height: 10),
                   Text(
-                    'Preloaded Workouts',
+                    loc.preloadedWorkouts,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
@@ -125,11 +156,15 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     );
   }
 
-  Widget _buildRoutineCard(dynamic r) {
+  Widget _buildRoutineCard(Map<String, dynamic> r) {
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        title: Text(r['name'] ?? r['title'] ?? 'Routine'),
+        title: Text(
+          r['name'] ??
+              r['title'] ??
+              AppLocalizations.of(context)!.routinesTitle,
+        ),
         subtitle: Text((r['description'] ?? '').toString()),
         trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 18),
         onTap: () {
@@ -155,7 +190,7 @@ class _PreloadedWorkoutsSection extends StatefulWidget {
 
 class _PreloadedWorkoutsSectionState extends State<_PreloadedWorkoutsSection> {
   final ApiService _api = ApiService();
-  List<dynamic> _workouts = [];
+  List<Map<String, dynamic>> _workouts = [];
   bool _loading = true;
 
   @override
@@ -166,19 +201,35 @@ class _PreloadedWorkoutsSectionState extends State<_PreloadedWorkoutsSection> {
 
   Future<void> _loadWorkouts() async {
     setState(() => _loading = true);
-    final res = await _api.getWorkouts();
-    if (!mounted) return;
-    if (res['success'] == true) {
-      setState(() => _workouts = res['workouts']);
+    try {
+      final res = await _api.getWorkouts();
+      if (!mounted) return;
+      if (res['success'] == true) {
+        setState(() => _workouts = _coerceListOfMaps(res['workouts']));
+      }
+    } catch (_) {
+      if (!mounted) return;
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
-    setState(() => _loading = false);
+  }
+
+  List<Map<String, dynamic>> _coerceListOfMaps(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     if (_loading) return const Center(child: CircularProgressIndicator());
-    if (_workouts.isEmpty) return const Text('No preloaded workouts');
+    if (_workouts.isEmpty) return Text(loc.noPreloadedWorkouts);
     return Column(
       children: _workouts.map((w) {
         return Card(
@@ -190,7 +241,7 @@ class _PreloadedWorkoutsSectionState extends State<_PreloadedWorkoutsSection> {
                 foregroundColor: colorScheme.primary,
               ),
               onPressed: () => widget.onUseTemplate(w),
-              child: const Text('Use'),
+              child: Text(loc.useLabel),
             ),
           ),
         );

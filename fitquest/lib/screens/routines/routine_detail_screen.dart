@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fitquest/locale/app_localizations.dart';
 import '../../services/api_service.dart';
 
 class RoutineDetailScreen extends StatefulWidget {
@@ -12,43 +13,76 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
   final ApiService _api = ApiService();
   Map<String, dynamic>? _routine;
   bool _loading = true;
+  bool _loadedFromArgs = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_loadedFromArgs) return;
+    _loadedFromArgs = true;
+
     final id = ModalRoute.of(context)!.settings.arguments;
-    if (id != null && id is String) _loadRoutine(id);
+    if (id == null) {
+      setState(() => _loading = false);
+      return;
+    }
+
+    final routineId = id.toString();
+    if (routineId.isEmpty) {
+      setState(() => _loading = false);
+      return;
+    }
+
+    _loadRoutine(routineId);
   }
 
   Future<void> _loadRoutine(String id) async {
+    final loc = AppLocalizations.of(context)!;
     setState(() => _loading = true);
-    final res = await _api.getRoutine(id);
-    if (!mounted) return;
-    if (res['success'] == true) {
-      setState(() => _routine = res['routine']);
-    } else {
+    try {
+      final res = await _api.getRoutine(id);
+      if (!mounted) return;
+      if (res['success'] == true && res['routine'] is Map) {
+        setState(() => _routine = Map<String, dynamic>.from(res['routine']));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(res['error'] ?? loc.failedToLoadRoutine)),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(res['error'] ?? 'Failed to load')));
+      ).showSnackBar(SnackBar(content: Text(loc.failedToLoadRoutine)));
     }
     setState(() => _loading = false);
   }
 
+  List<Map<String, dynamic>> _exercisesFromRoutine() {
+    final exercises = _routine?['exercises'];
+    if (exercises is! List) return const [];
+    return exercises
+        .whereType<Map>()
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
+  }
+
   Future<void> _delete() async {
     if (_routine == null) return;
+    final loc = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Delete routine?'),
-        content: const Text('This will permanently delete the routine.'),
+        title: Text(loc.deleteRoutineQuestion),
+        content: Text(loc.deleteRoutineConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Cancel'),
+            child: Text(loc.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Delete'),
+            child: Text(loc.removeLabel),
           ),
         ],
       ),
@@ -62,18 +96,19 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(res['error'] ?? 'Failed to delete')),
+        SnackBar(content: Text(res['error'] ?? loc.failedToDeleteRoutine)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_routine?['name'] ?? 'Routine'),
+        title: Text(_routine?['name'] ?? loc.routinesTitle),
         actions: [
           IconButton(
             onPressed: _delete,
@@ -97,14 +132,14 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                     ),
                     child: Text(
                       (_routine?['description'] ?? '').toString().isEmpty
-                          ? 'No description added yet.'
+                          ? loc.noDescriptionYet
                           : (_routine?['description'] ?? '').toString(),
                       style: TextStyle(color: colorScheme.onPrimaryContainer),
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Exercises',
+                    loc.exercises,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -113,26 +148,23 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                   const SizedBox(height: 8),
                   Expanded(
                     child: ListView(
-                      children: (_routine?['exercises'] as List<dynamic>? ?? [])
-                          .map((e) {
-                            return Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor:
-                                      colorScheme.secondaryContainer,
-                                  child: Icon(
-                                    Icons.fitness_center,
-                                    color: colorScheme.secondary,
-                                  ),
-                                ),
-                                title: Text(e['name'] ?? ''),
-                                subtitle: Text(
-                                  'Reps: ${e['reps'] ?? 0} • Sets: ${e['sets'] ?? 0} • Duration: ${e['durationSeconds'] ?? 0}s',
-                                ),
+                      children: _exercisesFromRoutine().map((e) {
+                        return Card(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: colorScheme.secondaryContainer,
+                              child: Icon(
+                                Icons.fitness_center,
+                                color: colorScheme.secondary,
                               ),
-                            );
-                          })
-                          .toList(),
+                            ),
+                            title: Text(e['name'] ?? ''),
+                            subtitle: Text(
+                              '${loc.repsLabel}: ${e['reps'] ?? 0} • ${loc.setsLabel}: ${e['sets'] ?? 0} • ${loc.durationLabel}: ${e['durationSeconds'] ?? 0}s',
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],

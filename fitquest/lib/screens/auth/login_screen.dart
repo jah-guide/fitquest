@@ -252,6 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           context,
                           listen: false,
                         ).signInWithGoogle();
+                        if (!context.mounted) return;
                         setState(() {
                           _isLoading = false;
                         });
@@ -300,6 +301,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               context,
                               listen: false,
                             ).signInWithApple();
+                            if (!context.mounted) return;
                             setState(() {
                               _isLoading = false;
                             });

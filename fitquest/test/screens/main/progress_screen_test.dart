@@ -23,24 +23,30 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  String _sessionsJson() {
+  String sessionsJson() {
     final now = DateTime.now();
     return json.encode([
       {
         'id': 's1',
-        'startedAt': now.subtract(const Duration(days: 1, minutes: 30)).toIso8601String(),
+        'startedAt': now
+            .subtract(const Duration(days: 1, minutes: 30))
+            .toIso8601String(),
         'endedAt': now.subtract(const Duration(days: 1)).toIso8601String(),
         'durationSeconds': 1800,
       },
       {
         'id': 's2',
-        'startedAt': now.subtract(const Duration(days: 12, minutes: 25)).toIso8601String(),
+        'startedAt': now
+            .subtract(const Duration(days: 12, minutes: 25))
+            .toIso8601String(),
         'endedAt': now.subtract(const Duration(days: 12)).toIso8601String(),
         'durationSeconds': 1500,
       },
       {
         'id': 's3',
-        'startedAt': now.subtract(const Duration(days: 35, minutes: 20)).toIso8601String(),
+        'startedAt': now
+            .subtract(const Duration(days: 35, minutes: 20))
+            .toIso8601String(),
         'endedAt': now.subtract(const Duration(days: 35)).toIso8601String(),
         'durationSeconds': 1200,
       },
@@ -61,7 +67,7 @@ void main() {
 
     testWidgets('shows analytics widgets when sessions exist', (tester) async {
       SharedPreferences.setMockInitialValues({
-        'fitquest_workout_sessions': _sessionsJson(),
+        'fitquest_workout_sessions': sessionsJson(),
       });
 
       await pumpProgress(tester);
@@ -86,7 +92,7 @@ void main() {
 
     testWidgets('range filter switches heading to 30 days', (tester) async {
       SharedPreferences.setMockInitialValues({
-        'fitquest_workout_sessions': _sessionsJson(),
+        'fitquest_workout_sessions': sessionsJson(),
       });
 
       await pumpProgress(tester);
@@ -100,7 +106,7 @@ void main() {
       tester,
     ) async {
       SharedPreferences.setMockInitialValues({
-        'fitquest_workout_sessions': _sessionsJson(),
+        'fitquest_workout_sessions': sessionsJson(),
       });
 
       await pumpProgress(tester);

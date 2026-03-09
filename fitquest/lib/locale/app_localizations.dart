@@ -82,6 +82,35 @@ class AppLocalizations {
       'about': 'About',
       'aboutText': 'FitQuest helps you track workouts and progress.',
       'signOut': 'Sign Out',
+      'routinesTitle': 'Routines',
+      'routinesHeroText': 'Build, save, and reuse routines like a pro coach.',
+      'myRoutines': 'My Routines',
+      'newLabel': 'New',
+      'noRoutinesYet': 'No routines yet. Create one!',
+      'preloadedWorkouts': 'Preloaded Workouts',
+      'noPreloadedWorkouts': 'No preloaded workouts',
+      'useLabel': 'Use',
+      'createRoutineTitle': 'Create Routine',
+      'createRoutineHeroText':
+          'Design your custom workout flow and save it as a routine.',
+      'nameLabel': 'Name',
+      'descriptionOptionalLabel': 'Description (optional)',
+      'addLabel': 'Add',
+      'exerciseNameLabel': 'Exercise name',
+      'repsLabel': 'Reps',
+      'setsLabel': 'Sets',
+      'durationSecLabel': 'Duration (sec)',
+      'restSecLabel': 'Rest (sec)',
+      'removeLabel': 'Remove',
+      'saveRoutineLabel': 'Save Routine',
+      'failedToLoadRoutines': 'Failed to load routines',
+      'failedToLoadRoutine': 'Failed to load routine',
+      'failedToDeleteRoutine': 'Failed to delete',
+      'failedToSaveRoutine': 'Failed to save',
+      'deleteRoutineQuestion': 'Delete routine?',
+      'deleteRoutineConfirm': 'This will permanently delete the routine.',
+      'noDescriptionYet': 'No description added yet.',
+      'durationLabel': 'Duration',
     },
     'zu': {
       'appTitle': 'I-FitQuest',
@@ -151,6 +180,36 @@ class AppLocalizations {
       'aboutText':
           'I-FitQuest ikusiza ukulandelela imisebenzi kanye nentuthuko.',
       'signOut': 'Phuma',
+      'routinesTitle': 'Amashejuli',
+      'routinesHeroText':
+          'Yakha, londoloza, bese usebenzisa kabusha amashejuli njengomqeqeshi.',
+      'myRoutines': 'Amashejuli Ami',
+      'newLabel': 'Okusha',
+      'noRoutinesYet': 'Awekho amashejuli okwamanje. Dala elisha!',
+      'preloadedWorkouts': 'Imizamo Efakwe Kuqala',
+      'noPreloadedWorkouts': 'Ayikho imizamo efakwe kuqala',
+      'useLabel': 'Sebenzisa',
+      'createRoutineTitle': 'Dala Ishejuli',
+      'createRoutineHeroText':
+          'Hlela ukuhamba komsebenzi wakho wokuzivocavoca bese uwugcina njengeshejuli.',
+      'nameLabel': 'Igama',
+      'descriptionOptionalLabel': 'Incazelo (uma ufuna)',
+      'addLabel': 'Engeza',
+      'exerciseNameLabel': 'Igama lomzamo',
+      'repsLabel': 'Ukuphindaphinda',
+      'setsLabel': 'Amasethi',
+      'durationSecLabel': 'Isikhathi (imizuzwana)',
+      'restSecLabel': 'Ikhefu (imizuzwana)',
+      'removeLabel': 'Susa',
+      'saveRoutineLabel': 'Londoloza Ishejuli',
+      'failedToLoadRoutines': 'Kwehlulekile ukulayisha amashejuli',
+      'failedToLoadRoutine': 'Kwehlulekile ukulayisha ishejuli',
+      'failedToDeleteRoutine': 'Kwehlulekile ukususa',
+      'failedToSaveRoutine': 'Kwehlulekile ukulondoloza',
+      'deleteRoutineQuestion': 'Susa ishejuli?',
+      'deleteRoutineConfirm': 'Lokhu kuzosisusa unomphela ishejuli.',
+      'noDescriptionYet': 'Ayikho incazelo okwamanje.',
+      'durationLabel': 'Isikhathi',
     },
     'af': {
       'appTitle': 'FitQuest',
@@ -219,6 +278,36 @@ class AppLocalizations {
       'about': 'Oor',
       'aboutText': 'FitQuest help jou om oefeninge en vordering na te spoor.',
       'signOut': 'Teken Uit',
+      'routinesTitle': 'Roetines',
+      'routinesHeroText':
+          'Bou, stoor en hergebruik roetines soos n professionele afrigter.',
+      'myRoutines': 'My Roetines',
+      'newLabel': 'Nuut',
+      'noRoutinesYet': 'Nog geen roetines nie. Skep een!',
+      'preloadedWorkouts': 'Voorafgelaaide Oefensessies',
+      'noPreloadedWorkouts': 'Geen voorafgelaaide oefensessies nie',
+      'useLabel': 'Gebruik',
+      'createRoutineTitle': 'Skep Roetine',
+      'createRoutineHeroText':
+          'Ontwerp jou eie oefenvloei en stoor dit as n roetine.',
+      'nameLabel': 'Naam',
+      'descriptionOptionalLabel': 'Beskrywing (opsioneel)',
+      'addLabel': 'Voeg by',
+      'exerciseNameLabel': 'Oefening naam',
+      'repsLabel': 'Herhalings',
+      'setsLabel': 'Stelle',
+      'durationSecLabel': 'Duur (sek)',
+      'restSecLabel': 'Rus (sek)',
+      'removeLabel': 'Verwyder',
+      'saveRoutineLabel': 'Stoor Roetine',
+      'failedToLoadRoutines': 'Kon nie roetines laai nie',
+      'failedToLoadRoutine': 'Kon nie roetine laai nie',
+      'failedToDeleteRoutine': 'Kon nie verwyder nie',
+      'failedToSaveRoutine': 'Kon nie stoor nie',
+      'deleteRoutineQuestion': 'Verwyder roetine?',
+      'deleteRoutineConfirm': 'Dit sal die roetine permanent verwyder.',
+      'noDescriptionYet': 'Geen beskrywing bygevoeg nie.',
+      'durationLabel': 'Duur',
     },
   };
 
@@ -295,10 +384,36 @@ class AppLocalizations {
   String get about => translate('about')!;
   String get aboutText => translate('aboutText')!;
   String get signOut => translate('signOut')!;
+  String get routinesTitle => translate('routinesTitle')!;
+  String get routinesHeroText => translate('routinesHeroText')!;
+  String get myRoutines => translate('myRoutines')!;
+  String get newLabel => translate('newLabel')!;
+  String get noRoutinesYet => translate('noRoutinesYet')!;
+  String get preloadedWorkouts => translate('preloadedWorkouts')!;
+  String get noPreloadedWorkouts => translate('noPreloadedWorkouts')!;
+  String get useLabel => translate('useLabel')!;
+  String get createRoutineTitle => translate('createRoutineTitle')!;
+  String get createRoutineHeroText => translate('createRoutineHeroText')!;
+  String get nameLabel => translate('nameLabel')!;
+  String get descriptionOptionalLabel => translate('descriptionOptionalLabel')!;
+  String get addLabel => translate('addLabel')!;
+  String get exerciseNameLabel => translate('exerciseNameLabel')!;
+  String get repsLabel => translate('repsLabel')!;
+  String get setsLabel => translate('setsLabel')!;
+  String get durationSecLabel => translate('durationSecLabel')!;
+  String get restSecLabel => translate('restSecLabel')!;
+  String get removeLabel => translate('removeLabel')!;
+  String get saveRoutineLabel => translate('saveRoutineLabel')!;
+  String get failedToLoadRoutines => translate('failedToLoadRoutines')!;
+  String get failedToLoadRoutine => translate('failedToLoadRoutine')!;
+  String get failedToDeleteRoutine => translate('failedToDeleteRoutine')!;
+  String get failedToSaveRoutine => translate('failedToSaveRoutine')!;
+  String get deleteRoutineQuestion => translate('deleteRoutineQuestion')!;
+  String get deleteRoutineConfirm => translate('deleteRoutineConfirm')!;
+  String get noDescriptionYet => translate('noDescriptionYet')!;
+  String get durationLabel => translate('durationLabel')!;
 
-  String get currentLanguage => translate(
-    'chooseLanguage',
-  )!; //dont really know about using this translate method here
+  String get currentLanguage => translate('chooseLanguage')!;
 }
 
 class _AppLocalizationsDelegate
