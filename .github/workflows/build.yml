@@ -1,0 +1,61 @@
+name: FitQuest CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+
+    - name: Show Flutter info
+      run: |
+        flutter --version
+        flutter doctor
+
+    - name: Install dependencies
+      working-directory: fitquest
+      run: flutter pub get
+
+    - name: Static analysis
+      working-directory: fitquest
+      run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+    - name: Run tests
+      working-directory: fitquest
+      run: flutter test
+
+    - name: Build APK
+      working-directory: fitquest
+      run: flutter build apk --debug
+
+  api:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install API dependencies
+      working-directory: fitquest-api
+      run: npm ci
+
+    - name: Run API smoke tests
+      working-directory: fitquest-api
+      run: npm test
