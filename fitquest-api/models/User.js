@@ -32,7 +32,11 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  // optional: lastLogin, profilePictureUrl, preferences, etc.
+  profilePictureUrl: {
+    type: String,
+    default: ''
+  },
+  // optional: lastLogin, preferences, etc.
 });
 
 module.exports = mongoose.model('User', UserSchema);

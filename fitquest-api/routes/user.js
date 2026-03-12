@@ -18,15 +18,16 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// PUT /api/user/me  (update displayName, email, password)
-// Body may include: displayName, email, password
+// PUT /api/user/me  (update displayName, email, password, profilePictureUrl)
+// Body may include: displayName, email, password, profilePictureUrl
 router.put('/me', auth, async (req, res) => {
   try {
-    const { displayName, email, password } = req.body;
+    const { displayName, email, password, profilePictureUrl } = req.body;
     const updates = {};
 
     if (displayName !== undefined) updates.displayName = displayName;
     if (email !== undefined) updates.email = email.toLowerCase();
+    if (profilePictureUrl !== undefined) updates.profilePictureUrl = profilePictureUrl;
 
     if (password !== undefined) {
       const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
