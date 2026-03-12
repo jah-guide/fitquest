@@ -67,11 +67,13 @@ class AuthProvider with ChangeNotifier {
     String? displayName,
     String? email,
     String? password,
+    String? profilePictureUrl,
   }) async {
     final result = await _apiService.updateUserProfile(
       displayName: displayName,
       email: email,
       password: password,
+      profilePictureUrl: profilePictureUrl,
     );
     if (result['success'] == true) {
       _currentUser = result['user'];
