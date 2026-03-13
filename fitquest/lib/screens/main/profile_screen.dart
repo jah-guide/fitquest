@@ -572,7 +572,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: () async {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(AppLocalizations.of(context)!.syncStarted),
+                          content: Text(
+                            AppLocalizations.of(context)!.syncStarted,
+                          ),
                         ),
                       );
 

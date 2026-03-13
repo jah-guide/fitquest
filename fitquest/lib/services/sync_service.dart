@@ -75,7 +75,8 @@ class SyncService {
               : DateTime.now(),
         );
 
-        final key = '${exercise.name.toLowerCase()}|${exercise.category.toLowerCase()}';
+        final key =
+            '${exercise.name.toLowerCase()}|${exercise.category.toLowerCase()}';
         if (known.contains(key)) continue;
 
         try {

@@ -44,7 +44,8 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
 
       if (isExistingRoutine) {
         _editingId = id;
-        _nameCtrl.text = arg['name']?.toString() ?? arg['title']?.toString() ?? '';
+        _nameCtrl.text =
+            arg['name']?.toString() ?? arg['title']?.toString() ?? '';
         _descCtrl.text = arg['description']?.toString() ?? '';
       } else {
         _nameCtrl.text = arg['title']?.toString() ?? '';
@@ -82,16 +83,16 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
             final filtered = query.isEmpty
                 ? allExercises
                 : allExercises
-                    .where(
-                      (e) =>
-                          e.name
-                              .toLowerCase()
-                              .contains(query.toLowerCase()) ||
-                          e.category
-                              .toLowerCase()
-                              .contains(query.toLowerCase()),
-                    )
-                    .toList();
+                      .where(
+                        (e) =>
+                            e.name.toLowerCase().contains(
+                              query.toLowerCase(),
+                            ) ||
+                            e.category.toLowerCase().contains(
+                              query.toLowerCase(),
+                            ),
+                      )
+                      .toList();
 
             return DraggableScrollableSheet(
               expand: false,
@@ -308,13 +309,13 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
                                     fontSize: 16,
                                     color:
                                         ex['name']?.toString().isNotEmpty ==
-                                                true
-                                            ? Theme.of(
-                                              context,
-                                            ).colorScheme.onSurface
-                                            : Theme.of(
-                                              context,
-                                            ).colorScheme.onSurfaceVariant,
+                                            true
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ),

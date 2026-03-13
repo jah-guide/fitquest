@@ -344,10 +344,7 @@ class ApiService {
   Future<Map<String, dynamic>> getExercises() async {
     try {
       final response = await http
-          .get(
-            Uri.parse('$baseUrl/exercises'),
-            headers: await _getHeaders(),
-          )
+          .get(Uri.parse('$baseUrl/exercises'), headers: await _getHeaders())
           .timeout(_requestTimeout);
 
       final data = json.decode(response.body);
@@ -356,7 +353,10 @@ class ApiService {
       }
       return {'success': false, 'error': data['msg'] ?? 'Server error'};
     } on TimeoutException {
-      return {'success': false, 'error': 'Request timed out. Please try again.'};
+      return {
+        'success': false,
+        'error': 'Request timed out. Please try again.',
+      };
     } catch (e) {
       return {'success': false, 'error': 'Network error: $e'};
     }
@@ -388,7 +388,10 @@ class ApiService {
       }
       return {'success': false, 'error': data['msg'] ?? 'Server error'};
     } on TimeoutException {
-      return {'success': false, 'error': 'Request timed out. Please try again.'};
+      return {
+        'success': false,
+        'error': 'Request timed out. Please try again.',
+      };
     } catch (e) {
       return {'success': false, 'error': 'Network error: $e'};
     }

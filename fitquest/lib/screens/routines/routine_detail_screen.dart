@@ -75,14 +75,16 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
             final filtered = query.isEmpty
                 ? all
                 : all
-                    .where(
-                      (e) =>
-                          e.name.toLowerCase().contains(query.toLowerCase()) ||
-                          e.category
-                              .toLowerCase()
-                              .contains(query.toLowerCase()),
-                    )
-                    .toList();
+                      .where(
+                        (e) =>
+                            e.name.toLowerCase().contains(
+                              query.toLowerCase(),
+                            ) ||
+                            e.category.toLowerCase().contains(
+                              query.toLowerCase(),
+                            ),
+                      )
+                      .toList();
             return DraggableScrollableSheet(
               expand: false,
               initialChildSize: 0.6,
@@ -174,9 +176,9 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
     if (!mounted) return;
     setState(() => _saving = false);
     if (res['success'] == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Routine saved')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Routine saved')));
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -217,9 +219,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(res['error'] ?? loc.failedToDeleteRoutine),
-        ),
+        SnackBar(content: Text(res['error'] ?? loc.failedToDeleteRoutine)),
       );
     }
   }
@@ -395,8 +395,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                                 ),
                               ),
                               keyboardType: TextInputType.number,
-                              onChanged: (v) => ex['durationSeconds'] =
-                                  int.tryParse(v) ?? 0,
+                              onChanged: (v) =>
+                                  ex['durationSeconds'] = int.tryParse(v) ?? 0,
                             ),
                           ),
                           const SizedBox(width: 8),

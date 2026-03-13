@@ -51,11 +51,11 @@ class _SplashScreenState extends State<SplashScreen>
     );
     _textSlideAnim =
         Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
-      ),
-    );
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
+          ),
+        );
 
     _controller.forward().then((_) {
       // Hold for a beat, then navigate
