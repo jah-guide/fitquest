@@ -1,158 +1,105 @@
-# FitQuest
+# FitQuest 🏋️
 
-FitQuest is a Flutter fitness app with a Node.js + MongoDB REST API. The project includes authentication, workout/routine management, offline-first exercise tracking, and synchronization support.
+FitQuest is a Flutter fitness app with a Node.js + MongoDB REST API.
+It supports secure authentication, routine/workout management, offline-first usage, syncing, multilingual UX, notifications, and blob-based profile image storage.
 
-## Repository Structure
+## 🎬 Demo Video
 
-- `fitquest/` — Flutter mobile app
-- `fitquest-api/` — Node.js REST API
-- `.github/workflows/build.yml` — automated CI for app + API
+- YouTube demo: https://youtu.be/5fhDJW6wS-k
 
-## Features Implemented
+## 📁 Repository Structure
 
-- User registration and login (password hashing with `bcrypt`)
-- Social sign-in endpoint support (Google/Apple token handling)
+- `fitquest/` - Flutter mobile app
+- `fitquest-api/` - Node.js/Express REST API
+- `.github/workflows/build.yml` - CI pipeline (Flutter + API)
+- `submission-evidence/` - POE evidence checklist and artifacts
+
+## ✅ Feature Summary
+
+- Registration and login with encrypted passwords (`bcrypt`)
+- Social sign-in endpoint support (Google/Apple token flow)
 - Profile and settings management
-- Theme switching (light/dark/system)
+- Theme switching: light, dark, system
 - Multi-language support: English, isiZulu, Afrikaans
-- Real-time push notification integration with Firebase Cloud Messaging (FCM)
-- Blob storage integration for profile images (Cloudinary)
+- Push notifications via Firebase Cloud Messaging (FCM)
+- Blob storage for avatars via Cloudinary (with fallback behavior)
 - Exercise browsing and routine management
-- Offline-capable local exercise storage (`sqflite`)
-- Sync flow to reconcile offline and online data
+- Offline local exercise storage (`sqflite`) and sync flow
 - REST API backed by MongoDB
+- Automated CI checks for app and API
 
-## Requirement Mapping (POE)
+## 📌 POE Requirement Mapping
 
-- Registration + login: implemented in app screens and API auth routes.
-- Password encryption: implemented using `bcrypt` in API auth route.
-- SSO: social auth endpoint implemented in API; app contains Google/Apple dependencies.
-- Settings change: implemented via profile/settings screens.
-- REST API + database: Node/Express API with Mongoose/MongoDB.
-- Offline mode + sync: local storage + sync service present in Flutter app.
-- Multi-language (South African languages): isiZulu (`zu`) and Afrikaans (`af`) included.
-- Real-time notifications: Firebase Messaging service integrated with runtime permission flow and topic subscription.
-- Per-user push targeting: FCM device token is synced to the authenticated user record through secure API endpoints.
-- Blob storage: user profile image upload endpoint stores images in Cloudinary and persists URL in MongoDB.
-- Automated testing/CI: GitHub Actions pipeline runs Flutter checks/tests/build and API tests.
+- Auth flow (register/login): Implemented in Flutter auth screens + API auth routes
+- Password encryption: Implemented with `bcrypt`
+- SSO: API social auth endpoint and app dependencies integrated
+- Settings changes: Theme/language/notification settings implemented
+- REST API + DB: Express + Mongoose + MongoDB
+- Offline + sync: Local storage and sync service implemented
+- Multilingual support: Includes isiZulu (`zu`) and Afrikaans (`af`)
+- Real-time notifications: FCM service and permission flow implemented
+- User-targeted push: Device tokens linked to authenticated users via secure endpoints
+- Blob storage: Avatar upload endpoint persists Cloudinary URL in MongoDB
+- Testing + CI: GitHub Actions workflow validates app and API
 
-## Push Notification Setup (FCM)
+## 🔔 Push Notifications Setup (FCM)
 
-To run real push notifications on Android device:
+To test real push notifications on Android:
 
-1. Create a Firebase project and add the Android app package (`com.example.fitquest` or your final package ID).
-2. Download `google-services.json` and place it in `fitquest/android/app/`.
-3. In Firebase Console, enable Cloud Messaging.
-4. Run app on a physical Android phone and allow notifications when prompted.
-5. Use Firebase Console to send a test message to topic: `fitquest_all`.
+1. Create a Firebase project and register your Android package.
+2. Add `google-services.json` to `fitquest/android/app/`.
+3. Enable Cloud Messaging in Firebase Console.
+4. Run on a physical device and allow notifications.
+5. Send a test notification to topic `fitquest_all`.
 
-### Targeted User Push via API
+### Targeted User Push API
 
-You can now send a push to a specific user (using saved `pushTokens`) via:
-
-- `POST /api/notifications/send-user`
+- Endpoint: `POST /api/notifications/send-user`
 - Auth: Bearer token required
-- Body: `{ "userId": "<target-user-id>", "title": "Hi", "body": "Message", "data": { "screen": "profile" } }`
+- Body example:
+
+```json
+{
+  "userId": "<target-user-id>",
+  "title": "Hi",
+  "body": "Message",
+  "data": { "screen": "profile" }
+}
+```
 
 Security behavior:
 
-- If `userId` is omitted, it sends to the currently authenticated user.
+- If `userId` is omitted, notification is sent to the authenticated user.
 - If `userId` is different from current user, include header `x-notify-key: <NOTIFY_API_KEY>`.
 
-Required API environment variables for targeted push:
+Required API environment variables:
 
-- `FIREBASE_SERVICE_ACCOUNT_PATH` (path to service account JSON), or
-- `FIREBASE_SERVICE_ACCOUNT_JSON` (stringified JSON contents)
-- `NOTIFY_API_KEY` (recommended, required for cross-user targeting)
+- `FIREBASE_SERVICE_ACCOUNT_PATH` or `FIREBASE_SERVICE_ACCOUNT_JSON`
+- `NOTIFY_API_KEY`
 
-## Blob Storage Setup (Cloudinary)
+## ☁️ Blob Storage Setup (Cloudinary)
 
-Add these API environment variables:
+Required API environment variables:
 
 - `CLOUDINARY_CLOUD_NAME`
 - `CLOUDINARY_API_KEY`
 - `CLOUDINARY_API_SECRET`
 
-Implemented endpoints and app integration:
+Implemented integration:
 
-- `POST /api/user/me/avatar` uploads base64 image to Cloudinary and stores `profileImageUrl`
-- Profile screen allows selecting a gallery image and uploading it to blob storage
+- `POST /api/user/me/avatar` accepts base64 and stores `profileImageUrl`
+- Flutter profile screen supports gallery selection and upload
 
-Implemented files:
+## 🧪 Testing and CI
 
-- `fitquest/lib/services/notification_service.dart`
-- `fitquest/lib/main.dart`
-- `fitquest/lib/screens/settings/settings_screen.dart`
-- `fitquest/android/app/src/main/AndroidManifest.xml`
-
-## Demonstration Video
-
-Add your final unlisted YouTube link here before submission:
-
-- Demo video link: `PASTE_YOUR_VIDEO_LINK_HERE`
-
-Video checklist:
-
-- Show full feature walkthrough with voice-over.
-- Show registration/login flow.
-- Show settings changes.
-- Show offline usage and sync behavior.
-- Show API/database-stored data.
-
-## Release Notes (Prototype ➜ Final)
-
-### v1.0.0 Final POE
-
-- Added full authentication workflow with secure password hashing.
-- Added social sign-in API route and conflict handling logic.
-- Implemented routines and workout endpoints with persistent storage.
-- Implemented offline exercise storage and synchronization flow.
-- Added multilingual localization including isiZulu and Afrikaans.
-- Improved settings with language, theme, and notifications toggles.
-- Added CI workflow for automated Flutter and API validation.
-
-### Notable Innovative Features
-
-- Offline-first exercise management with later synchronization.
-- Localized UX with South African language support.
-- Combined local + cloud architecture (Flutter + Express + MongoDB).
-
-## AI Tools Usage Write-Up (<= 500 words)
-
-AI tools were used to support development, debugging, and documentation quality during this assessment. The primary use cases were:
-
-1. **Code assistance and refactoring** — AI suggestions were used to speed up repetitive tasks such as creating route scaffolding, provider wiring, and localization key consistency. Suggestions were reviewed and adapted to match project requirements.
-2. **Debugging support** — AI was used to diagnose common issues (API route errors, async handling mistakes, CI workflow misconfiguration, and invalid package script definitions). Each suggested fix was tested in the local project before acceptance.
-3. **Documentation drafting** — AI support was used to structure README content, requirement mapping, and release notes in a clear format aligned to submission criteria.
-4. **Validation workflow setup** — AI was used to help configure and verify GitHub Actions steps for Flutter analysis/testing/build and API smoke testing.
-
-All AI-generated output was manually validated, edited, and integrated by the developer. AI was treated as an assistant for productivity and quality improvement, not as a replacement for understanding or independent verification. Final implementation decisions, testing, and submission checks were completed by the developer.
-
-## Automated Testing & CI
-
-GitHub Actions workflow: `.github/workflows/build.yml`
+Workflow file: `.github/workflows/build.yml`
 
 Pipeline jobs:
 
 - Flutter: `flutter pub get`, `flutter analyze`, `flutter test`, `flutter build apk --debug`
 - API: `npm ci`, `npm test`
 
-## Publication Preparation Evidence Checklist
-
-Add these files/screenshots to the repo before final submission:
-
-- Signed APK screenshot/export evidence
-- App screenshots (main features)
-- Google Play Console upload/publish screenshot (if applicable)
-- Demonstration video link in this README
-
-Suggested evidence folder:
-
-- `submission-evidence/screenshots/`
-- `submission-evidence/video/`
-- `submission-evidence/release/`
-
-## Local Run Instructions
+## 🚀 Local Run Instructions
 
 ### Flutter app
 
@@ -164,13 +111,44 @@ Suggested evidence folder:
 
 1. `cd fitquest-api`
 2. Create `.env` with:
-	- `MONGO_URI=...`
-	- `JWT_SECRET=...`
-	- `PORT=5000` (optional)
+   - `MONGO_URI=...`
+   - `JWT_SECRET=...`
+   - `PORT=5000` (optional)
 3. `npm install`
 4. `npm run dev`
 
-## Quick Test Commands
+## 📝 Release Notes
 
-- Flutter: `cd fitquest && flutter test`
-- API: `cd fitquest-api && npm test`
+See `RELEASE_NOTES.md` for prototype-to-final evolution, bug fixes, and innovations.
+
+## 📷 Submission Evidence Checklist
+
+Before final hand-in, confirm:
+
+- Demo recorded on physical phone with voice-over
+- Demo link included in this `README.md`
+- Auth + SSO shown in video
+- Settings changes shown (theme/language/notifications)
+- REST API + database-backed behavior shown
+- Offline usage + sync shown
+- APK export evidence captured
+- Feature screenshots captured
+- CI checks passing on latest commit
+- Final POE tag present
+
+Suggested evidence folders:
+
+- `submission-evidence/screenshots/`
+- `submission-evidence/video/`
+- `submission-evidence/release/`
+
+## 🤖 AI Tools Usage (<= 500 words)
+
+AI assistance was used to improve development speed, debugging quality, and documentation clarity.
+
+1. Code assistance and refactoring: AI suggestions helped accelerate repetitive scaffolding (routes, providers, localization consistency) and cleanup tasks.
+2. Debugging support: AI helped diagnose API integration issues, async/UI test flakiness, and CI workflow misconfigurations.
+3. Documentation support: AI was used to structure this README, requirement mapping, and release-note clarity.
+4. Validation setup: AI contributed to refining CI checks for Flutter and API workflows.
+
+All suggested output was manually reviewed, tested, and adapted before being accepted. Final implementation decisions and validation remained developer-driven.
