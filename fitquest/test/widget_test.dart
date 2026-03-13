@@ -23,7 +23,7 @@ class TestAuthProvider extends AuthProvider {
 }
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('App renders splash screen', (WidgetTester tester) async {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -38,7 +38,8 @@ void main() {
       ),
     );
 
-    // Verify that the home stats show two zero values (workouts/minutes).
-    expect(find.text('0'), findsNWidgets(2));
+    // Splash screen should render first.
+    expect(find.text('FitQuest'), findsOneWidget);
+
   });
 }

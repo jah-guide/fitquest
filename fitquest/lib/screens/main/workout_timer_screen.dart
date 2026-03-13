@@ -340,28 +340,6 @@ class _WorkoutTimerScreenState extends State<WorkoutTimerScreen> {
               },
             ),
             const SizedBox(height: 14),
-            _buildRoutineSelectorCard(
-              context,
-              hasStarted: hasStarted,
-              hasRoutineSelected: hasRoutineSelected,
-            ),
-            const SizedBox(height: 20),
-            if (hasRoutineSelected) ...[
-              Text(
-                'Exercise Log',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 10),
-              ..._exerciseLogs.asMap().entries.map(
-                (entry) => _buildExerciseLogCard(
-                  context,
-                  exerciseIndex: entry.key,
-                  exercise: entry.value,
-                  locked: !hasStarted || _isSaving,
-                ),
-              ),
-              const SizedBox(height: 14),
-            ],
             if (!hasStarted)
               FilledButton.icon(
                 onPressed: _isSaving ? null : _startWorkout,
@@ -390,6 +368,29 @@ class _WorkoutTimerScreenState extends State<WorkoutTimerScreen> {
                     : const Icon(Icons.stop_rounded),
                 label: const Text('Stop and Save'),
               ),
+            ],
+            const SizedBox(height: 12),
+            _buildRoutineSelectorCard(
+              context,
+              hasStarted: hasStarted,
+              hasRoutineSelected: hasRoutineSelected,
+            ),
+            const SizedBox(height: 20),
+            if (hasRoutineSelected) ...[
+              Text(
+                'Exercise Log',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 10),
+              ..._exerciseLogs.asMap().entries.map(
+                (entry) => _buildExerciseLogCard(
+                  context,
+                  exerciseIndex: entry.key,
+                  exercise: entry.value,
+                  locked: !hasStarted || _isSaving,
+                ),
+              ),
+              const SizedBox(height: 14),
             ],
           ],
         ),
@@ -422,7 +423,7 @@ class _WorkoutTimerScreenState extends State<WorkoutTimerScreen> {
             if (_isLoadingRoutines)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
-                child: LinearProgressIndicator(minHeight: 3),
+                child: LinearProgressIndicator(value: 0.5, minHeight: 3),
               ),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
