@@ -188,11 +188,13 @@ class ApiService {
 
   Future<Map<String, dynamic>> uploadProfileImage(String imageBase64) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/user/me/avatar'),
-        headers: await _getHeaders(),
-        body: json.encode({'imageBase64': imageBase64}),
-      );
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/user/me/avatar'),
+            headers: await _getHeaders(),
+            body: json.encode({'imageBase64': imageBase64}),
+          )
+          .timeout(const Duration(seconds: 30));
 
       Map<String, dynamic> data = {};
       try {
@@ -215,6 +217,8 @@ class ApiService {
         'success': false,
         'error': data['msg'] ?? 'Server error (${response.statusCode})',
       };
+    } on TimeoutException {
+      return {'success': false, 'error': 'Upload timed out. Please try again.'};
     } catch (e) {
       return {'success': false, 'error': 'Network error: $e'};
     }
@@ -332,6 +336,59 @@ class ApiService {
         'success': false,
         'error': 'Request timed out. Please check your connection.',
       };
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: $e'};
+    }
+  }
+
+  Future<Map<String, dynamic>> getExercises() async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/exercises'),
+            headers: await _getHeaders(),
+          )
+          .timeout(_requestTimeout);
+
+      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        return {'success': true, 'exercises': data['exercises']};
+      }
+      return {'success': false, 'error': data['msg'] ?? 'Server error'};
+    } on TimeoutException {
+      return {'success': false, 'error': 'Request timed out. Please try again.'};
+    } catch (e) {
+      return {'success': false, 'error': 'Network error: $e'};
+    }
+  }
+
+  Future<Map<String, dynamic>> createExercise({
+    required String name,
+    required String category,
+    String description = '',
+    String imageUrl = '',
+  }) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/exercises'),
+            headers: await _getHeaders(),
+            body: json.encode({
+              'name': name,
+              'category': category,
+              'description': description,
+              'imageUrl': imageUrl,
+            }),
+          )
+          .timeout(_requestTimeout);
+
+      final data = json.decode(response.body);
+      if (response.statusCode == 201) {
+        return {'success': true, 'exercise': data['exercise']};
+      }
+      return {'success': false, 'error': data['msg'] ?? 'Server error'};
+    } on TimeoutException {
+      return {'success': false, 'error': 'Request timed out. Please try again.'};
     } catch (e) {
       return {'success': false, 'error': 'Network error: $e'};
     }

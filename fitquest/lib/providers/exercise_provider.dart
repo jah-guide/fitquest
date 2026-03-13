@@ -4,15 +4,12 @@ import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/database_helper.dart';
 import '../services/sync_service.dart';
-// API removed for exercises — use sample data only
-// import '../services/exercise_api_service.dart';
 import '../services/sample_data.dart';
 import '../models/exercise.dart';
 
 class ExerciseProvider with ChangeNotifier {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final SyncService _syncService = SyncService();
-  // final ExerciseApiService _apiService = ExerciseApiService();
 
   List<Exercise> _exercises = [];
   bool _isLoading = false;

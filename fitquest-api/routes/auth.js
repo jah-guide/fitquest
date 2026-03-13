@@ -42,7 +42,12 @@ router.post('/register', async (req, res) => {
     return res.status(201).json({
       msg: 'User created',
       token,
-      user: { id: newUser._id, email: newUser.email, displayName: newUser.displayName }
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        displayName: newUser.displayName,
+        profileImageUrl: newUser.profileImageUrl || '',
+      }
     });
   } catch (err) {
     console.error('Register error', err);
@@ -68,7 +73,12 @@ router.post('/login', async (req, res) => {
     return res.json({
       msg: 'Login successful',
       token,
-      user: { id: user._id, email: user.email, displayName: user.displayName }
+      user: {
+        id: user._id,
+        email: user.email,
+        displayName: user.displayName,
+        profileImageUrl: user.profileImageUrl || '',
+      }
     });
   } catch (err) {
     console.error('Login error', err);
@@ -141,7 +151,16 @@ router.post('/social', async (req, res) => {
 
     // Create token and respond
     const token = createToken(user);
-    return res.json({ msg: 'Social login successful', token, user: { id: user._id, email: user.email, displayName: user.displayName } });
+    return res.json({
+      msg: 'Social login successful',
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        displayName: user.displayName,
+        profileImageUrl: user.profileImageUrl || '',
+      },
+    });
   } catch (err) {
     console.error('Social login error', err?.response?.data || err);
     return res.status(500).json({ msg: 'Server error' });

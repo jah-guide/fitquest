@@ -3,15 +3,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import './database_helper.dart';
 import '../models/exercise.dart';
-import 'exercise_api_service.dart';
+import 'api_service.dart';
 
 class SyncService {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final Connectivity _connectivity = Connectivity();
-  final ExerciseApiService _apiService = ExerciseApiService();
-
-  // Simulate API endpoints
-  static const String baseUrl = 'http://your-api.com/api';
+  final ApiService _apiService = ApiService();
 
   Future<bool> checkConnectivity() async {
     final result = await _connectivity.checkConnectivity();
@@ -25,10 +22,9 @@ class SyncService {
     // 1. Get unsynced exercises from local DB
     final unsyncedExercises = await _dbHelper.getUnsyncedExercises();
 
-    // 2. Sync each unsynced exercise
+    // 2. Push each unsynced exercise to the authenticated backend API
     for (final exercise in unsyncedExercises) {
       try {
-        // Simulate API call to sync exercise
         await _syncExerciseToServer(exercise);
 
         // Mark as synced in local DB
@@ -43,21 +39,50 @@ class SyncService {
   }
 
   Future<void> _syncExerciseToServer(Exercise exercise) async {
-    // Simulate API call
-    await Future.delayed(const Duration(milliseconds: 500));
-    debugPrint('Synced exercise to server: ${exercise.name}');
+    final result = await _apiService.createExercise(
+      name: exercise.name,
+      category: exercise.category,
+      description: exercise.description,
+      imageUrl: exercise.imageUrl,
+    );
+
+    if (result['success'] != true) {
+      throw Exception(result['error'] ?? 'Failed to sync exercise');
+    }
   }
 
   Future<void> _fetchLatestExercises() async {
     try {
-      // Use the ExerciseApiService (wger) to fetch recent exercises instead
-      final res = await _apiService.fetchExercises(limit: 30);
-      final remote = (res['results'] as List<dynamic>).cast<Exercise>();
-      for (final exercise in remote) {
+      final result = await _apiService.getExercises();
+      if (result['success'] != true) return;
+
+      final remoteRaw = (result['exercises'] as List<dynamic>? ?? const []);
+      final local = await _dbHelper.getAllExercises();
+      final known = local
+          .map((e) => '${e.name.toLowerCase()}|${e.category.toLowerCase()}')
+          .toSet();
+
+      for (final item in remoteRaw) {
+        if (item is! Map<String, dynamic>) continue;
+        final exercise = Exercise(
+          name: (item['name'] ?? '').toString(),
+          category: (item['category'] ?? 'General').toString(),
+          description: (item['description'] ?? '').toString(),
+          imageUrl: (item['imageUrl'] ?? '').toString(),
+          isSynced: true,
+          createdAt: item['createdAt'] is String
+              ? DateTime.tryParse(item['createdAt']) ?? DateTime.now()
+              : DateTime.now(),
+        );
+
+        final key = '${exercise.name.toLowerCase()}|${exercise.category.toLowerCase()}';
+        if (known.contains(key)) continue;
+
         try {
           await _dbHelper.insertExercise(exercise);
-        } catch (e) {
-          // ignore DB insert errors on unsupported platforms
+          known.add(key);
+        } catch (_) {
+          // Ignore local persistence failures on unsupported platforms.
         }
       }
     } catch (e) {

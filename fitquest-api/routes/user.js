@@ -103,27 +103,38 @@ router.post('/me/avatar', auth, async (req, res) => {
       return res.status(400).json({ msg: 'imageBase64 is required' });
     }
 
-    const cloudinary = getCloudinaryClient();
-    if (!cloudinary) {
-      return res.status(503).json({
-        msg: 'Blob storage is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET.',
-      });
-    }
-
     const normalized = imageBase64.includes('base64,')
       ? imageBase64
       : `data:image/jpeg;base64,${imageBase64}`;
 
-    const uploadResult = await cloudinary.uploader.upload(normalized, {
-      folder: 'fitquest/avatars',
-      public_id: `user_${req.user.id}_${Date.now()}`,
-      overwrite: true,
-      resource_type: 'image',
-    });
+    let profileImageUrl;
+    const cloudinaryClient = getCloudinaryClient();
+
+    if (cloudinaryClient) {
+      // Upload to Cloudinary — deterministic public_id so overwrite works correctly
+      const uploadResult = await cloudinaryClient.uploader.upload(normalized, {
+        folder: 'fitquest/avatars',
+        public_id: `user_${req.user.id}`,
+        overwrite: true,
+        invalidate: true,
+        resource_type: 'image',
+      });
+      profileImageUrl = uploadResult.secure_url;
+    } else {
+      // Fallback: store compressed data URL directly in MongoDB when Cloudinary
+      // credentials are not configured (development / self-hosted deployments).
+      // Flutter already compresses to 720 px / 60 % quality, so the base64
+      // string is typically well under 200 KB.
+      const MAX_BYTES = 2 * 1024 * 1024; // 2 MB safety cap
+      if (Buffer.byteLength(normalized, 'utf8') > MAX_BYTES) {
+        return res.status(413).json({ msg: 'Image too large. Please use a smaller photo.' });
+      }
+      profileImageUrl = normalized;
+    }
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { profileImageUrl: uploadResult.secure_url },
+      { profileImageUrl },
       { new: true }
     ).select('-passwordHash -__v');
 
@@ -131,7 +142,7 @@ router.post('/me/avatar', auth, async (req, res) => {
 
     return res.json({
       msg: 'Profile image uploaded',
-      profileImageUrl: uploadResult.secure_url,
+      profileImageUrl,
       user,
     });
   } catch (err) {

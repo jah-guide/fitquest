@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fitquest/locale/app_localizations.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/exercise_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/language_provider.dart';
 import '../auth/login_screen.dart';
@@ -305,6 +306,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final languageProvider = Provider.of<LanguageProvider>(context);
     final user = auth.currentUser;
     final avatarUrl = (user?['profileImageUrl'] ?? '').toString();
+    // Resolve the correct ImageProvider: MemoryImage for base64 data URLs
+    // (fallback storage), NetworkImage for Cloudinary / remote URLs.
+    ImageProvider? avatarImage;
+    if (avatarUrl.isNotEmpty) {
+      if (avatarUrl.startsWith('data:')) {
+        try {
+          final base64Str = avatarUrl.contains(',')
+              ? avatarUrl.split(',').last
+              : avatarUrl;
+          avatarImage = MemoryImage(base64Decode(base64Str));
+        } catch (_) {
+          avatarImage = null;
+        }
+      } else {
+        avatarImage = NetworkImage(avatarUrl);
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -326,10 +344,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       backgroundColor: Theme.of(
                         context,
                       ).colorScheme.primary.withValues(alpha: 0.12),
-                      backgroundImage: avatarUrl.isNotEmpty
-                          ? NetworkImage(avatarUrl)
-                          : null,
-                      child: avatarUrl.isEmpty
+                      backgroundImage: avatarImage,
+                      child: avatarImage == null
                           ? Text(
                               (user?['displayName'] ?? 'U')
                                       .toString()
@@ -553,14 +569,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     subtitle: Text(
                       AppLocalizations.of(context)!.syncDataSubtitle,
                     ),
-                    onTap: () {
+                    onTap: () async {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                            AppLocalizations.of(context)!.syncStarted,
-                          ),
+                          content: Text(AppLocalizations.of(context)!.syncStarted),
                         ),
                       );
+
+                      try {
+                        await Provider.of<ExerciseProvider>(
+                          context,
+                          listen: false,
+                        ).syncNow();
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Sync completed')),
+                        );
+                      } catch (e) {
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Sync failed: $e')),
+                        );
+                      }
                     },
                   ),
                   const Divider(height: 1),

@@ -10,6 +10,7 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const workoutsRoutes = require('./routes/workouts');
 const routinesRoutes = require('./routes/routines');
+const exercisesRoutes = require('./routes/exercises');
 const notificationsRoutes = require('./routes/notifications');
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api/auth', authRoutes);   // /api/auth/register, /api/auth/login
 app.use('/api/user', userRoutes);   // protected user endpoints
 app.use('/api/workouts', workoutsRoutes); // public workouts
 app.use('/api/routines', routinesRoutes); // user routines (protected)
+app.use('/api/exercises', exercisesRoutes); // user exercises (protected)
 app.use('/api/notifications', notificationsRoutes); // push send endpoints (protected)
 
 // Global error handler to avoid HTML responses on API failures

@@ -34,6 +34,7 @@ class AuthProvider with ChangeNotifier {
     if (result['success'] == true) {
       _isLoggedIn = true;
       _currentUser = result['user'];
+      await _loadUserProfile();
       await _syncPushToken();
       notifyListeners();
     }
@@ -53,6 +54,7 @@ class AuthProvider with ChangeNotifier {
     if (result['success'] == true) {
       _isLoggedIn = true;
       _currentUser = result['user'];
+      await _loadUserProfile();
       await _syncPushToken();
       notifyListeners();
     }
@@ -87,7 +89,12 @@ class AuthProvider with ChangeNotifier {
   Future<Map<String, dynamic>> uploadProfileImage(String imageBase64) async {
     final result = await _apiService.uploadProfileImage(imageBase64);
     if (result['success'] == true) {
-      _currentUser = result['user'];
+      if (result['user'] != null) {
+        _currentUser = Map<String, dynamic>.from(result['user'] as Map);
+      } else {
+        // Reload profile from server to pick up the new profileImageUrl
+        await _loadUserProfile();
+      }
       notifyListeners();
     }
     return result;
@@ -102,6 +109,7 @@ class AuthProvider with ChangeNotifier {
     if (result['success'] == true) {
       _isLoggedIn = true;
       _currentUser = result['user'];
+      await _loadUserProfile();
       await _syncPushToken();
       notifyListeners();
     }
