@@ -32,7 +32,9 @@ class _WorkoutTimerScreenState extends State<WorkoutTimerScreen> {
   @override
   void initState() {
     super.initState();
-    _loadRoutines();
+    // Deferred so the first frame renders immediately (avoids pumpAndSettle
+    // hangs in widget tests when no backend is reachable).
+    Future.microtask(_loadRoutines);
   }
 
   @override
@@ -157,15 +159,6 @@ class _WorkoutTimerScreenState extends State<WorkoutTimerScreen> {
   }
 
   void _startWorkout() {
-    if (_selectedRoutine == null || _exerciseLogs.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Select a routine to start your workout.'),
-        ),
-      );
-      return;
-    }
-
     _startedAt ??= DateTime.now();
     _stopwatch.start();
     _elapsedSeconds.value = _stopwatch.elapsed.inSeconds;
@@ -371,9 +364,7 @@ class _WorkoutTimerScreenState extends State<WorkoutTimerScreen> {
             ],
             if (!hasStarted)
               FilledButton.icon(
-                onPressed: _isSaving || !hasRoutineSelected
-                    ? null
-                    : _startWorkout,
+                onPressed: _isSaving ? null : _startWorkout,
                 icon: const Icon(Icons.play_arrow_rounded),
                 label: const Text('Start Workout'),
               )

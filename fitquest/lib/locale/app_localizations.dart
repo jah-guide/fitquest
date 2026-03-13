@@ -91,6 +91,7 @@ class AppLocalizations {
       'noPreloadedWorkouts': 'No preloaded workouts',
       'useLabel': 'Use',
       'createRoutineTitle': 'Create Routine',
+      'editRoutineTitle': 'Edit Routine',
       'createRoutineHeroText':
           'Design your custom workout flow and save it as a routine.',
       'nameLabel': 'Name',
@@ -190,6 +191,7 @@ class AppLocalizations {
       'noPreloadedWorkouts': 'Ayikho imizamo efakwe kuqala',
       'useLabel': 'Sebenzisa',
       'createRoutineTitle': 'Dala Ishejuli',
+      'editRoutineTitle': 'Hlela Ishejuli',
       'createRoutineHeroText':
           'Hlela ukuhamba komsebenzi wakho wokuzivocavoca bese uwugcina njengeshejuli.',
       'nameLabel': 'Igama',
@@ -288,6 +290,7 @@ class AppLocalizations {
       'noPreloadedWorkouts': 'Geen voorafgelaaide oefensessies nie',
       'useLabel': 'Gebruik',
       'createRoutineTitle': 'Skep Roetine',
+      'editRoutineTitle': 'Wysig Roetine',
       'createRoutineHeroText':
           'Ontwerp jou eie oefenvloei en stoor dit as n roetine.',
       'nameLabel': 'Naam',
@@ -393,6 +396,7 @@ class AppLocalizations {
   String get noPreloadedWorkouts => translate('noPreloadedWorkouts')!;
   String get useLabel => translate('useLabel')!;
   String get createRoutineTitle => translate('createRoutineTitle')!;
+  String get editRoutineTitle => translate('editRoutineTitle')!;
   String get createRoutineHeroText => translate('createRoutineHeroText')!;
   String get nameLabel => translate('nameLabel')!;
   String get descriptionOptionalLabel => translate('descriptionOptionalLabel')!;

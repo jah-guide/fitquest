@@ -171,7 +171,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
           Navigator.pushNamed(
             context,
             '/routines/view',
-            arguments: r['id'] ?? r['_id'],
+            arguments: r,
           ).then((_) => _loadRoutines());
         },
       ),

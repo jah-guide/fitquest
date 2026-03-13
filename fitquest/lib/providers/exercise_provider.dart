@@ -30,6 +30,7 @@ class ExerciseProvider with ChangeNotifier {
 
   ExerciseProvider() {
     _loadFavorites();
+    loadExercises();
   }
 
   Future<void> loadExercises() async {

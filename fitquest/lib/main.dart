@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'providers/theme_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/main/main_app.dart';
+import 'screens/splash_screen.dart';
 import 'screens/routines/routines_screen.dart';
 import 'screens/routines/create_routine_screen.dart';
 import 'screens/routines/routine_detail_screen.dart';
@@ -232,13 +233,7 @@ class App extends StatelessWidget {
           darkTheme: _buildTheme(Brightness.dark, seedColor),
           themeMode: themeProvider.themeMode,
           locale: languageProvider.locale,
-          home: Consumer<AuthProvider>(
-            builder: (context, authProvider, _) {
-              return authProvider.currentUser != null
-                  ? const MainApp()
-                  : const LoginScreen();
-            },
-          ),
+          home: const SplashScreen(),
           localizationsDelegates: [
             AppLocalizations.delegate,
             _FallbackMaterialLocalizationsDelegate(materialLocale),
