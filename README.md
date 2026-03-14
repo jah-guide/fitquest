@@ -5,7 +5,7 @@ It supports secure authentication, routine/workout management, offline-first usa
 
 ## 🎬 Demo Video
 
-- YouTube demo: https://youtu.be/5fhDJW6wS-k
+- YouTube demo: https://youtu.be/a7T3cw1dqqA
 
 ## 📁 Repository Structure
 
