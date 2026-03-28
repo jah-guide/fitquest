@@ -100,12 +100,14 @@ class ApiService {
     String? displayName,
     String? email,
     String? password,
+    String? profilePictureUrl,
   }) async {
     try {
       final Map<String, dynamic> updateData = {};
       if (displayName != null) updateData['displayName'] = displayName;
       if (email != null) updateData['email'] = email;
       if (password != null) updateData['password'] = password;
+      if (profilePictureUrl != null) updateData['profilePictureUrl'] = profilePictureUrl;
 
       final response = await http.put(
         Uri.parse('$baseUrl/user/me'),
